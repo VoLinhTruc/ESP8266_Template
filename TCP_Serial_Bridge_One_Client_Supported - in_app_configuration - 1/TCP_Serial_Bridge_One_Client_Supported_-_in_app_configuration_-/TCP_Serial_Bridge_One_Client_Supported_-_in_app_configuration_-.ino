@@ -36,11 +36,13 @@ void setup() {
   // Turn on station ----------------------------------------------------
 
 
-  my_server.begin();
+  my_server.begin(port);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  
+  // Nomal performing -----------------------------------------------------------------
   WiFiClient client = my_server.available();
   if(client)
   {
@@ -92,4 +94,23 @@ void loop() {
     }
     client.stop();
   }
+  // Nomal performing -----------------------------------------------------------------
+
+  // Check Wifi status and reconnect if it has lost -----------------------------------
+  if(WiFi.status() != WL_CONNECTED)
+  {    
+    Serial.println("Connecting to ");
+    Serial.println(ssid.c_str());
+    WiFi.config(ip, gateway, subnet);
+    WiFi.begin(ssid.c_str(), pwd.c_str());
+    while(WiFi.status() != WL_CONNECTED)
+    {
+      Serial.print('.');
+      delay(500);
+    }
+    Serial.println();
+    Serial.printf("Connected to %s \r\n", ssid.c_str());
+    Serial.printf("Static IP: %s\r\n", ip.toString().c_str());
+  }
+  // Check Wifi status and reconnect if it has lost -----------------------------------
 }
